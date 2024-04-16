@@ -48,12 +48,17 @@ class Switch(): # ACTION DESTINATION STATE --> current packet size, remainin_tim
         if ep >= 2:
             loss_arr = []
             for i in range(ep):
-                with open('loss_pk/%d/S%d.pkl'%(i,self.name), 'rb') as file:
+                with open('results/%s/loss_pk/%d/S%d.pkl'%(self.output_path,i,self.name), 'rb') as file:
                     loss = pickle.load(file)
+                if loss == -99:
+                    continue
                 loss_arr.append(loss)
             loss_arr = np.array(loss_arr)
-            idx = np.argmin(loss_arr)
-            self.model.load_weights('results/%s/models/S%d_EP%d.weights.h5'%(self.output_path,self.name,idx))
+            if len(loss_arr) == 0:
+                self.model.load_weights('results/%s/models/S%d_EP%d.weights.h5'%(self.output_path,self.name,ep-1))
+            else:
+                idx = np.argmin(loss_arr)
+                self.model.load_weights('results/%s/models/S%d_EP%d.weights.h5'%(self.output_path,self.name,idx))
 
     def addConnection(self, connection):
         # print(connection)

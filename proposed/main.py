@@ -185,23 +185,27 @@ def simulation(episode):
         os.system('mkdir results/%s/rewards_pk/%d'%(output_path,episode))
         with open('results/%s/rewards_pk/%d/S%d.pkl'%(output_path,episode,s), 'wb') as file:
             pickle.dump(network.switches[s].rewards, file)
-        returns = np.cumsum(network.switches[s].rewards[::-1])[::-1]
-        advantages = returns - np.mean(returns)
-        print('DEBUG',s)
-        with tf.GradientTape() as tape:
-            # state01 = np.array(network.switches[s].states01)
-            # state02 = np.array(network.switches[s].states02)
-            # state03 = np.array(network.switches[s].states03)
-            logits = network.switches[s].model(network.switches[s].states)
-            action_masks = tf.one_hot(network.switches[s].actions, 8)
-            log_probs = tf.reduce_sum(action_masks * tf.math.log(logits), axis=1)
-            loss = tf.reduce_mean(log_probs * network.switches[s].delay)
-        os.system('mkdir results/%s/loss_pk/%d'%(output_path,episode))
-        with open('results/%s/loss_pk/%d/S%d.pkl'%(output_path,episode,s), 'wb') as file:
-            pickle.dump(loss, file)
-        grads = tape.gradient(loss, network.switches[s].model.trainable_variables)
-        network.switches[s].optimizer.apply_gradients(zip(grads, network.switches[s].model.trainable_variables))
-        network.switches[s].model.save_weights('results/%s/models/S%d_EP%d.weights.h5'%(output_path,network.switches[s].name,episode))
+        if len(network.switches[s].states) == 0:
+            os.system('mkdir results/%s/loss_pk/%d'%(output_path,episode))
+            with open('results/%s/loss_pk/%d/S%d.pkl'%(output_path,episode,s), 'wb') as file:
+                pickle.dump(-99, file)
+            # grads = tape.gradient(loss, network.switches[s].model.trainable_variables)
+            # network.switches[s].optimizer.apply_gradients(zip(grads, network.switches[s].model.trainable_variables))
+            network.switches[s].model.save_weights('results/%s/models/S%d_EP%d.weights.h5'%(output_path,network.switches[s].name,episode))
+        else:
+            returns = np.cumsum(network.switches[s].rewards[::-1])[::-1]
+            advantages = returns - np.mean(returns)
+            with tf.GradientTape() as tape:
+                logits = network.switches[s].model(network.switches[s].states)
+                action_masks = tf.one_hot(network.switches[s].actions, 8)
+                log_probs = tf.reduce_sum(action_masks * tf.math.log(logits), axis=1)
+                loss = tf.reduce_mean(log_probs * network.switches[s].delay)
+            os.system('mkdir results/%s/loss_pk/%d'%(output_path,episode))
+            with open('results/%s/loss_pk/%d/S%d.pkl'%(output_path,episode,s), 'wb') as file:
+                pickle.dump(loss, file)
+            grads = tape.gradient(loss, network.switches[s].model.trainable_variables)
+            network.switches[s].optimizer.apply_gradients(zip(grads, network.switches[s].model.trainable_variables))
+            network.switches[s].model.save_weights('results/%s/models/S%d_EP%d.weights.h5'%(output_path,network.switches[s].name,episode))
 
 
 for i in range(100):

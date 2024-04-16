@@ -66,9 +66,10 @@ class Switch(): # ACTION DESTINATION STATE --> current packet size, remainin_tim
         for k in packet.timestamp.keys():
             if len(k.split('-')) == 2:
                 xy.append(int(k.split('-')[1]))
+        x.remove(self.name)
         forwardTo = random.choice(x)
-        if forwardTo in xy:
-            return 
+        # if forwardTo in xy:
+        #     return 
         
         # if self.outConnections[forwardTo].isAvailable(t):
         if self.outConnections[forwardTo].packet == None:

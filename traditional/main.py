@@ -57,7 +57,7 @@ class Network():
 
 
     def inPacket(self, packet, t):
-        if len(self.switches[packet.src].queue) < self.switches[packet.src].MAXIMUM_QUEUE:
+        if len(self.switches[packet.src].queue) < self.switches[packet.src].MAXIMUM_QUEUE-1:
             self.switches[packet.src].enQueue(packet,t)
         else:
             self.remainingStreams.append(packet)
@@ -111,7 +111,7 @@ class Network():
 
         # ENQUEUE
         for p in self.remainingStreams:
-            if len(self.switches[p.src].queue) < self.switches[p.src].MAXIMUM_QUEUE:
+            if len(self.switches[p.src].queue) < self.switches[p.src].MAXIMUM_QUEUE -1:
                 # print('y')
                 self.switches[p.src].enQueue(p,sim_time)
                 self.remainingStreams.remove(p)
@@ -146,22 +146,22 @@ for c in network.connections.keys():
 SIMULATION_TIME = 10 #minutes
 SIMULATION_TIME = SIMULATION_TIME * 60 * pow(10,6) #microseconds
 from tqdm import tqdm
-progress_bar = tqdm(total=len(packets), desc="Success packets")
+# progress_bar = total=len(packets), desc="Success packets")
 for sim_time in range(SIMULATION_TIME):
     network.run(sim_time)
     # print('===========',network.readableNanoSeconds(sim_time))
     packets_in_each_sw = np.zeros(9)
     for s in network.switches.keys():
         packets_in_each_sw[s] = len(network.switches[s].queue)
-    # print('In queue packets',packets_in_each_sw,sum(packets_in_each_sw))
-    # print('Remaining packets',len(network.remainingStreams))
-    # print('Success packets',len(network.successTransfer))
-    progress_bar.update(n=1)
+    print('In queue packets',packets_in_each_sw,sum(packets_in_each_sw))
+    print('Remaining packets',len(network.remainingStreams))
+    print('Success packets',len(network.successTransfer))
+    # progress_bar.update(n=1)
     packets_in_each_conn = 0
     for c in network.connections.keys():
         if network.connections[c].packet != None:
             packets_in_each_conn = packets_in_each_conn + 1
-    # print('Connection packets',packets_in_each_conn,'/',len(network.connections.keys()))
+    print('Connection packets',packets_in_each_conn,'/',len(network.connections.keys()))
     if sum(packets_in_each_sw) + len(network.remainingStreams) + len(network.successTransfer) + packets_in_each_conn != len(packets):
         arr = []
         a = []
@@ -182,4 +182,4 @@ for sim_time in range(SIMULATION_TIME):
             print(p)
         break
     if len(network.successTransfer) == len(packets): break
-progress_bar.close()
+# progress_bar.close()
