@@ -55,8 +55,8 @@
 
 # time python3 main.py ../benchmark01/packets/00_packet05.pkl
 # time python3 main.py ../benchmark01/packets/01_packet05.pkl
-time python3 main.py ../benchmark01/packets/02_packet05.pkl
-time python3 main.py ../benchmark01/packets/03_packet05.pkl
+# time python3 main.py ../benchmark01/packets/02_packet05.pkl
+# time python3 main.py ../benchmark01/packets/03_packet05.pkl
 time python3 main.py ../benchmark01/packets/04_packet05.pkl
 time python3 main.py ../benchmark01/packets/05_packet05.pkl
 time python3 main.py ../benchmark01/packets/06_packet05.pkl
