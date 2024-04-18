@@ -12,6 +12,7 @@ import tensorflow as tf
 import time 
 
 input_path = sys.argv[1]
+start_ep = int(sys.argv[2])
 output_path = input_path.split('/')[3].split('.pkl')[0]
 print(output_path)
 os.system('mkdir results/%s'%output_path)
@@ -208,5 +209,5 @@ def simulation(episode):
             network.switches[s].model.save_weights('results/%s/models/S%d_EP%d.weights.h5'%(output_path,network.switches[s].name,episode))
 
 
-for i in range(100):
+for i in range(start_ep,100):
     simulation(i)
