@@ -163,14 +163,14 @@ def simulation(episode):
         packets_in_each_sw = np.zeros(9)
         for s in network.switches.keys():
             packets_in_each_sw[s] = len(network.switches[s].queue)
-        print('In queue packets',packets_in_each_sw,sum(packets_in_each_sw))
-        print('Remaining packets',len(network.remainingStreams))
-        print('Success packets',len(network.successTransfer))
+        # print('In queue packets',packets_in_each_sw,sum(packets_in_each_sw))
+        # print('Remaining packets',len(network.remainingStreams))
+        # print('Success packets',len(network.successTransfer))
         packets_in_each_conn = 0
         for c in network.connections.keys():
             if network.connections[c].packet != None:
                 packets_in_each_conn = packets_in_each_conn + 1
-        print('Connection packets',packets_in_each_conn,'/',len(network.connections.keys()))
+        # print('Connection packets',packets_in_each_conn,'/',len(network.connections.keys()))
         if sum(packets_in_each_sw) + len(network.remainingStreams) + len(network.successTransfer) + packets_in_each_conn != len(packets):
             print('ERRROR')
             break
